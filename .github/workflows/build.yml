@@ -20,7 +20,6 @@ jobs:
     Check-Updates:
         runs-on: ubuntu-latest
         outputs:
-            should_build: ${{ steps.check.outputs.should_build }}
             upstream_tag: ${{ steps.check.outputs.upstream_tag }}
         steps:
             - name: Checkout repo
@@ -35,19 +34,19 @@ jobs:
                   
                   # check if we already pushed this tag to our fork
                   if git ls-remote --tags origin | grep -q "refs/tags/$UPSTREAM"; then
-                      echo "already up to date with $UPSTREAM!"
-                      echo "should_build=false" >> "$GITHUB_OUTPUT"
+                      echo "already up to date with $UPSTREAM! aborting workflow."
+                      exit 1 # this forcefully crashes and fails the job!
                   else
                       echo "new version found: $UPSTREAM!"
-                      echo "should_build=true" >> "$GITHUB_OUTPUT"
                   fi
 
     Build:
         needs: Check-Updates
-        if: needs.Check-Updates.outputs.should_build == 'true' || github.event_name == 'workflow_dispatch'
+        # (the long 'if' statement was removed from here because if the step 
+        # above fails, github automatically refuses to run this job anyway!)
         name: Build Equicord
         runs-on: ubuntu-latest
-
+        
         steps:
             - uses: actions/checkout@v6
 
