@@ -18,9 +18,6 @@ permissions:
 
 jobs:
     Build:
-        needs: Check-Updates
-        # (the long 'if' statement was removed from here because if the step 
-        # above fails, github automatically refuses to run this job anyway!)
         name: Build Equicord
         runs-on: ubuntu-latest
         
