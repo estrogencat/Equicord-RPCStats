@@ -72,17 +72,11 @@ jobs:
                   rm release/*.map
 
             - name: Upload Equicord Stable
-              if: ${{ vars.ACT == 'false' }}
               run: |
                   gh release view latest || gh release create latest --title "latest build" --notes "automated equicord build"
                   gh release upload latest --clobber dist/release/*
-                  
-                  # push a lightweight tag so the checker knows we built it
-                  git tag -f "${{ needs.Check-Updates.outputs.upstream_tag }}"
-                  git push origin "${{ needs.Check-Updates.outputs.upstream_tag }}" --force
 
             - name: Upload Plugin JSONs to Equibored repo
-              if: ${{ vars.ACT == 'false' }}
               run: |
                   git config --global user.name "GitHub-Actions"
                   git config --global user.email actions@github.com
