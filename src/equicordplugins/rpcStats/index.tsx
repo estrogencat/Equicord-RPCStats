@@ -9,6 +9,7 @@ import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
 import { Message } from "@vencord/discord-types";
+import { ActivityType } from "@vencord/discord-types/enums";
 import { ApplicationAssetUtils, FluxDispatcher, IconUtils, UserStore } from "@webpack/common";
 
 enum StatsDisplay {
@@ -29,6 +30,28 @@ const settings = definePluginSettings({
         default: "",
         restartNeeded: false,
         isValid: (value: string) => !value || /^\d{16,21}$/.test(value) || "Must be a valid Application ID",
+        onChange: () => updateData()
+    },
+    type: {
+        type: OptionType.SELECT,
+        description: "The activity type of the RPC.",
+        options: [
+            { value: ActivityType.PLAYING, label: "Playing" },
+            { value: ActivityType.STREAMING, label: "Streaming" },
+            { value: ActivityType.LISTENING, label: "Listening" },
+            { value: ActivityType.WATCHING, label: "Watching", default: true },
+            { value: ActivityType.COMPETING, label: "Competing" }
+        ],
+        restartNeeded: false,
+        onChange: () => updateData()
+    },
+    streamLink: {
+        type: OptionType.STRING,
+        description: "The Twitch or YouTube link to use when the activity type is Streaming.",
+        default: "",
+        restartNeeded: false,
+        disabled: (): boolean => settings.store.type !== ActivityType.STREAMING,
+        isValid: (value: string) => !value || /https?:\/\/(www\.)?(twitch\.tv|youtube\.com)\/\w+/.test(value) || "Must be a valid Twitch or YouTube link.",
         onChange: () => updateData()
     },
     assetURL: {
@@ -75,7 +98,8 @@ async function setRpc(disable = false, details?: string) {
         application_id: settings.store.appID || "0",
         name: settings.store.RPCTitle,
         details: details || "No info right now :(",
-        type: 0,
+        type: settings.store.type,
+        url: settings.store.type === ActivityType.STREAMING ? settings.store.streamLink : undefined,
         flags: 1,
         assets: {
             large_image: await getApplicationAsset(fallbackImage)
