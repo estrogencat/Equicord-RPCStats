@@ -19,10 +19,18 @@ enum StatsDisplay {
 export async function getApplicationAsset(key: string): Promise<string> {
     if (/https?:\/\/(cdn|media)\.discordapp\.(com|net)\/attachments\//.test(key))
         return "mp:" + key.replace(/https?:\/\/(cdn|media)\.discordapp\.(com|net)\//, "");
-    return (await ApplicationAssetUtils.fetchAssetIds("0", [key]))[0];
+    return (await ApplicationAssetUtils.fetchAssetIds(settings.store.appID || "0", [key]))[0];
 }
 
 const settings = definePluginSettings({
+    appID: {
+        type: OptionType.STRING,
+        description: "The application ID to use for your RPC. Set your own so it doesn't replace other rich presences.",
+        default: "",
+        restartNeeded: false,
+        isValid: (value: string) => !value || /^\d{16,21}$/.test(value) || "Must be a valid Discord ID.",
+        onChange: () => updateData()
+    },
     assetURL: {
         type: OptionType.STRING,
         description: "The image to use for your RPC. Your profile picture is used if left blank.",
@@ -64,7 +72,7 @@ async function setRpc(disable = false, details?: string) {
         || IconUtils.getDefaultAvatarURL(UserStore.getCurrentUser().id);
 
     const activity = {
-        application_id: "0",
+        application_id: settings.store.appID || "0",
         name: settings.store.RPCTitle,
         details: details || "No info right now :(",
         type: 0,
