@@ -39,8 +39,8 @@ const settings = definePluginSettings({
             { value: ActivityType.PLAYING, label: "Playing" },
             { value: ActivityType.STREAMING, label: "Streaming" },
             { value: ActivityType.LISTENING, label: "Listening" },
-            { value: ActivityType.WATCHING, label: "Watching", default: true },
-            { value: ActivityType.COMPETING, label: "Competing" }
+            { value: ActivityType.WATCHING, label: "Watching" },
+            { value: ActivityType.COMPETING, label: "Competing", default: true }
         ],
         restartNeeded: false,
         onChange: () => updateData()
