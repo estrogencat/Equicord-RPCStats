@@ -25,10 +25,10 @@ export async function getApplicationAsset(key: string): Promise<string> {
 const settings = definePluginSettings({
     appID: {
         type: OptionType.STRING,
-        description: "The application ID to use for your RPC. Set your own so it doesn't replace other rich presences.",
+        description: "The application ID to use for your RPC.",
         default: "",
         restartNeeded: false,
-        isValid: (value: string) => !value || /^\d{16,21}$/.test(value) || "Must be a valid Discord ID.",
+        isValid: (value: string) => !value || /^\d{16,21}$/.test(value) || "Must be a valid Application ID",
         onChange: () => updateData()
     },
     assetURL: {
