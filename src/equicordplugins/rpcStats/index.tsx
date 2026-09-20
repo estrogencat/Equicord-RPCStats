@@ -151,7 +151,7 @@ async function updateData() {
 
         case StatsDisplay.MessagesSentAllTime: {
             const messagesAllTime = (await DataStore.get("RPCStatsAllTimeMessages")) ?? 0;
-            setRpc(false, `Messages sent all time: ${messagesAllTime}`);
+            setRpc(false, `All time msg count: ${messagesAllTime}`);
             break;
         }
     }
