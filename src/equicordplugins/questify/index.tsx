@@ -197,7 +197,7 @@ export default definePlugin({
             predicate: () => getQuestifySettings().disableQuestsEverything || getQuestifySettings().disableRelocationNotices,
             replacement: [
                 {
-                    match: /GLOBAL_DISCOVERY_TABS/g,
+                    match: /\i\.\i(?=\.filter\(\i=>\(\i!==\i\.GlobalDiscoveryTab\.QUESTS)/,
                     replace: '$&.filter(tab=>tab!=="quests")'
                 }
             ]
@@ -322,17 +322,8 @@ export default definePlugin({
             ]
         },
         {
-            // Prevent Video Quests from pausing on lost focus.
-            find: "[QV] | Pausing video | playerState:",
-            predicate: () => !getQuestifySettings().disableQuestsEverything && getQuestifySettings().preventVideoQuestsPausing,
-            replacement: {
-                match: /(?<=setCaptionEnabled\),)({focused:)(\i)/,
-                replace: "$2=true,$1questifyFocused"
-            }
-        },
-        {
-            // Prevent Video Quests from pausing on lost focus.
-            find: ",listenForHlsErrors:!1",
+            // Prevents video quests from pausing on lost focus or visibility.
+            find: "trackQuestVideoFocusChange:",
             predicate: () => !getQuestifySettings().disableQuestsEverything && getQuestifySettings().preventVideoQuestsPausing,
             replacement: {
                 match: /(?<=pauseOnLostVisibility:)!\i/,
@@ -547,7 +538,7 @@ export default definePlugin({
         {
             // Allow non-shareable Quests to embed in chat and to have
             // their share URLs copyable from the embed context menu.
-            find: "NOT_SHAREABLE}function",
+            find: ".sharePolicy!==",
             group: true,
             predicate: () => !getQuestifySettings().disableQuestsEverything,
             replacement: {
